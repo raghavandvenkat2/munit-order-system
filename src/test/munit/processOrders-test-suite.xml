@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  	xmlns:mock="http://www.mulesoft.org/schema/mule/mock" 
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns="http://www.mulesoft.org/schema/mule/core" 
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
+    <munit:config name="munit" doc:name="MUnit configuration"/>
+    
+    <spring:beans>
+        <spring:import resource="classpath:munit-order-system.xml"/>
+    </spring:beans>
+    <munit:test name="processOrders-payloadReturnsJavaMapWithTwoElements_True" description="Calling processOrders flow returns payload of type Java Map containing 2 key value pairs">
+        <munit:set payload="#[[{'orderID':444, 'location':'international','price':14.01}, {'orderID':444, 'location':'international','price':14.01},{'orderID':555, 'location':'domestic','price':14.01}]]" doc:name="Set Message: Set PayLoad to International and Domestic Orders"/>
+        <flow-ref name="processOrders" doc:name="call processOrders"/>
+        <munit:assert-true message="FAILED: expected payload datatype is java.lang.Map" condition="#[payload is java.util.Map]" doc:name="Assert True: Validate payLoad's type is Java Map"/>
+    </munit:test>
+</mule>
