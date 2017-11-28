@@ -21,4 +21,14 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
             <munit:assert-on-equals message="FAILED: Expected location to be international, but found #[payload.'location'] at row: #[flowVars.counter] instead!!" expectedValue="#['international']" actualValue="#[payload.'location']" doc:name="Assert Equals: location Equals Internatonal"/>
         </foreach>
     </munit:test>
+    
+    <munit:test name="processOrdersDomestic-test-suite-processOrdersTest" description="Test">
+        <munit:set payload="#[[{'orderID':444, 'location':'international','price':14.01}, {'orderID':444, 'location':'international','price':14.01},{'orderID':555, 'location':'domestic','price':14.01}]]" doc:name="Set Message: Set PayLoad to International and Domestic Orders"/>
+        <flow-ref name="processOrders" doc:name="Flow-ref to processOrders"/>
+        <munit:assert-true condition="#[payload.'domestic'.size() &gt; 0]" doc:name="Assert True: Validate  Domestic key has some rows"/>
+        <foreach doc:name="For Each" collection="#[payload.'domestic']">
+            <munit:assert-on-equals message="FAILED: Expected location to be international, but found #[payload.'location'] at row: #[flowVars.counter] instead!!" expectedValue="#['domestic']" actualValue="#[payload.'location']" doc:name="Assert Equals: location Equals Internatonal"/>
+        </foreach>
+    </munit:test>
+    
 </mule>
