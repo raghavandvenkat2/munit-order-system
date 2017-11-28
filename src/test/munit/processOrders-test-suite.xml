@@ -7,14 +7,15 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
     <spring:beans>
         <spring:import resource="classpath:munit-order-system.xml"/>
     </spring:beans>
-    <munit:test name="processOrders-payloadReturnsJavaMapWithTwoElements_True" description="Calling processOrders flow returns payload of type Java Map containing 2 key value pairs">
+    <munit:before-test name="processOrders-test-suiteBefore_Test" description="Before tests actions">
         <munit:set payload="#[[{'orderID':444, 'location':'international','price':14.01}, {'orderID':444, 'location':'international','price':14.01},{'orderID':555, 'location':'domestic','price':14.01}]]" doc:name="Set Message: Set PayLoad to International and Domestic Orders"/>
+    </munit:before-test>
+    <munit:test name="processOrders-payloadReturnsJavaMapWithTwoElements_True" description="Calling processOrders flow returns payload of type Java Map containing 2 key value pairs">
         <flow-ref name="processOrders" doc:name="call processOrders"/>
         <munit:assert-true message="FAILED: expected payload datatype is java.lang.Map" condition="#[payload is java.util.Map]" doc:name="Assert True: Validate payLoad's type is Java Map"/>
         <munit:assert-on-equals message="FAILED: expected payload size is 2" expectedValue="#[2]" actualValue="#[payload.size()]" doc:name="Assert Equals: Validate size of the payload is 2"/>
     </munit:test>
     <munit:test name="processOrders-test-suite-processOrdersTest" description="Test">
-        <munit:set payload="#[[{'orderID':444, 'location':'international','price':14.01}, {'orderID':444, 'location':'international','price':14.01},{'orderID':555, 'location':'domestic','price':14.01}]]" doc:name="Set Message: Set PayLoad to International and Domestic Orders"/>
         <flow-ref name="processOrders" doc:name="Flow-ref to processOrders"/>
         <munit:assert-true condition="#[payload.'international'.size() &gt; 0]" doc:name="Assert True: Validate  International key has some rows"/>
         <foreach doc:name="For Each" collection="#[payload.'international']">
@@ -23,7 +24,6 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
     </munit:test>
     
     <munit:test name="processOrdersDomestic-test-suite-processOrdersTest" description="Test">
-        <munit:set payload="#[[{'orderID':444, 'location':'international','price':14.01}, {'orderID':444, 'location':'international','price':14.01},{'orderID':555, 'location':'domestic','price':14.01}]]" doc:name="Set Message: Set PayLoad to International and Domestic Orders"/>
         <flow-ref name="processOrders" doc:name="Flow-ref to processOrders"/>
         <munit:assert-true condition="#[payload.'domestic'.size() &gt; 0]" doc:name="Assert True: Validate  Domestic key has some rows"/>
         <foreach doc:name="For Each" collection="#[payload.'domestic']">
